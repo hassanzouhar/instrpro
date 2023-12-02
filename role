@@ -1,0 +1,39 @@
+import openai
+from pprint import pprint
+
+openai.api_key = "SKRIV_INN_DIN_API_NØKKEL" 
+
+prompt_template = """
+Generer en trinnvis forklaring for dette regnskapsspørsmålet: 
+
+{spørsmål}
+
+{svaralternativer}
+
+  Forklaring: 
+  1. Trinn 1...  
+  2. Trinn 2...
+  3. etc.
+
+  Derfor er svaret {svar}  
+
+  Returner en JSON-streng med forklaringen og svaret:
+
+{{  
+  "forklaring": "[generert tekst]",
+  "svar": "[A/B/C/D]"  
+}}
+"""
+
+spørsmål = "Hva er formålet med avskrivninger?"
+svar = "B"
+svaralternativer = ["A) Øke fremtidig kontantstrøm", 
+                    "B) Fordele anskaffelseskost over brukstid",  
+                    "C) Redusere årets overskudd", 
+                    "D) Øke balanseverdien"]
+                    
+prompt = prompt_template.format(spørsmål=spørsmål, svaralternativer="\n".join(svaralternativer), svar=svar)
+
+response = openai.Completion.create(engine="text-davinci-003", prompt=prompt, max_tokens=500)
+
+pprint(response["choices"][0]["text"])
